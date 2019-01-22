@@ -25,8 +25,8 @@ d3.json(url).then (function (data) {
   const maxT = _.maxBy(data, 'ts').ts;
 
   const tasks = _.uniq(_.map(data, (o) => { return o.task; }));
-  const roots = _.filter(data, (o) => { return o.parent === 'null'; });
-  const subtasks = _.groupBy(_.filter(data, (o) => { return o.parent !== 'null'; }), 'parent');
+  const roots = _.filter(data, (o) => { return o.parent_id === 0; });
+  const subtasks = _.groupBy(_.filter(data, (o) => { return o.parent_id !== 0; }), 'parent_id');
 
   const x = d3.scaleLinear()
               .domain([minT, maxT])
@@ -44,8 +44,8 @@ d3.json(url).then (function (data) {
     .attr('y2', height)
     .attr('transform', "translate(0, " + (-height) + ")");
 
-  function drawSubTasks(svg, parentName, y) {
-    const ts = subtasks[parentName];
+  function drawSubTasks(svg, parentId, y) {
+    const ts = subtasks[parentId];
 
     if (!ts || ts.length === 0) {
       return;
@@ -53,7 +53,7 @@ d3.json(url).then (function (data) {
 
     _.each(ts, function (o) {
       drawTask(svg, o, y);
-      drawSubTasks(svg, o.task, y + blockHeight);
+      drawSubTasks(svg, o.id, y + blockHeight);
     });
   }
 
@@ -71,7 +71,7 @@ d3.json(url).then (function (data) {
 
   _.each(roots, function (o) {
     drawTask(svg, o, 0);
-    drawSubTasks(svg, o.task, blockHeight);
+    drawSubTasks(svg, o.id, blockHeight);
   });
 
 
@@ -79,8 +79,6 @@ d3.json(url).then (function (data) {
   const task = tooltip.getElementsByClassName('task')[0];
   const length = tooltip.getElementsByClassName('length')[0];
   const body = document.getElementsByTagName('body')[0];
-
-  console.log(body);
 
   svg.selectAll('.task')
     .on('mouseenter', function () {

@@ -3,12 +3,13 @@ require 'json'
 indicator = '[PROFILE]'
 
 class Measurement
-  attr_reader :ts, :thread_id, :parent, :task, :length
+  attr_reader :ts, :id, :thread_id, :parent_id, :task, :length
 
-  def initialize(ts, thread_id, parent, task, length)
+  def initialize(ts, id, thread_id, parent_id, task, length)
     @ts = ts.to_i
+    @id = id.to_i
     @thread_id = thread_id
-    @parent = parent
+    @parent_id = parent_id.to_i
     @task = task
     @length = length.to_i
   end
@@ -26,7 +27,8 @@ objs = measurements.map do |m|
   { ts_abs: ms(m.ts),
     ts: ms(m.ts - min_ts),
     thread_id: m.thread_id,
-    parent: m.parent,
+    parent_id: m.parent_id,
+    id: m.id,
     task: m.task,
     length: ms(m.length)
   }
