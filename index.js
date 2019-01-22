@@ -2,7 +2,6 @@ const url = 'https://gist.githubusercontent.com/yipdw/58559104bb8a15498bb0526021
 
 d3.json(url).then (function (data) {
   const vis = document.getElementById('vis');
-  const html = document.getElementsByTagName('html')[0];
 
   const margin = {
     top: 20,
@@ -32,8 +31,7 @@ d3.json(url).then (function (data) {
   const x = d3.scaleLinear()
               .domain([minT, maxT])
               .range([0, width]);
-  const xAxis = d3.axisBottom(x);
-  const colorTopLevel = d3.scaleOrdinal().domain(roots).range(d3.schemePastel1);
+  const xAxis = d3.axisBottom(x).ticks(50);
   const color = d3.scaleOrdinal().domain(tasks).range(d3.schemeCategory10);
   const blockHeight = 32;
 
@@ -42,7 +40,11 @@ d3.json(url).then (function (data) {
       .attr('transform', "translate(0, " + (height - margin.bottom) + ")")
       .call(xAxis);
 
-  function drawSubTasks(svg, parentName, y, color) {
+  svg.selectAll('.tick line')
+    .attr('y2', height)
+    .attr('transform', "translate(0, " + (-height) + ")");
+
+  function drawSubTasks(svg, parentName, y) {
     const ts = subtasks[parentName];
 
     if (!ts || ts.length === 0) {
@@ -50,12 +52,12 @@ d3.json(url).then (function (data) {
     }
 
     _.each(ts, function (o) {
-      drawTask(svg, o, y, color);
-      drawSubTasks(svg, o.task, y + blockHeight, color);
+      drawTask(svg, o, y);
+      drawSubTasks(svg, o.task, y + blockHeight);
     });
   }
 
-  function drawTask(svg, o, y, color) {
+  function drawTask(svg, o, y) {
     svg.append('rect')
       .attr('width', x(o.length))
       .attr('x', x(o.ts))
@@ -68,31 +70,38 @@ d3.json(url).then (function (data) {
   }
 
   _.each(roots, function (o) {
-    drawTask(svg, o, 0, colorTopLevel);
-    drawSubTasks(svg, o.task, blockHeight, color);
+    drawTask(svg, o, 0);
+    drawSubTasks(svg, o.task, blockHeight);
   });
+
 
   const tooltip = document.getElementById('tooltip');
   const task = tooltip.getElementsByClassName('task')[0];
   const length = tooltip.getElementsByClassName('length')[0];
-  const hide = () => { tooltip.classList.remove('active'); }
+  const body = document.getElementsByTagName('body')[0];
+
+  console.log(body);
 
   svg.selectAll('.task')
     .on('mouseenter', function () {
       const el = d3.select(this);
+      const p = d3.mouse(body);
+
       el.classed('selected', true);
 
       task.innerHTML = el.attr('p-task');
       length.innerHTML = _.round(el.attr('p-length'), 3) + ' ms';
       tooltip.classList.add('active');
 
-      tooltip.style.left = el.attr('x') + 'px';
-      tooltip.style.top = (parseInt(el.attr('y'), 10) + blockHeight) + 'px';
+      tooltip.style.left = p[0] + 'px';
+      tooltip.style.top = (p[1] + blockHeight) + 'px';
     })
     .on('mouseleave', function () {
       const el = d3.select(this);
       el.classed('selected', false);
     });
 
-  d3.select(tooltip).on('click', hide);
+  d3.select(tooltip).on('click', () => { tooltip.classList.remove('active'); });
 });
+
+// vim:ts=2:sw=2:et
