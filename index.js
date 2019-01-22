@@ -29,8 +29,6 @@ d3.json(url).then (function (data) {
   const roots = _.filter(data, (o) => { return o.parent === 'null'; });
   const subtasks = _.groupBy(_.filter(data, (o) => { return o.parent !== 'null'; }), 'parent');
 
-  console.log(subtasks);
-
   const x = d3.scaleLinear()
               .domain([minT, maxT])
               .range([0, width]);
