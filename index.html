@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <style type="text/css">
+      #vis {
+        width: 4000px;
+        height: 400px;
+      }
+
+      #vis .tick > line {
+        fill: none;
+        stroke: #000000;
+        stroke-width: 1.5px;
+      }
+
+      #vis .tick > text {
+        fill: #000000;
+      }
+
+      path.domain {
+        fill: none;
+        stroke: #000000;
+        stroke-width: 1.5px;
+      }
+
+      html {
+        font-family: sans-serif;
+        font-size: 14px;
+      }
+
+      #tooltip {
+        position: absolute;
+        background-color: #ffff60;
+        border: 1px solid #000;
+        display: none;
+      }
+
+      #tooltip.active {
+        display: block;
+      }
+
+      #tooltip th {
+        font-weight: bold;
+        font-size: 14px;
+        min-width: 120px;
+      }
+
+      rect.selected {
+        stroke: yellow;
+        stroke-width: 2px;
+        stroke-alignment: inner;
+      }
+
+      #tooltip .task {
+        word-break: keep-all;
+      }
+      
+      #tooltip th, #tooltip td {
+        width: 50%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="tooltip">
+      <table>
+        <tbody>
+          <tr>
+            <th class="task"></th>
+            <td class="length"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="vis"></div>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"></script>
+    <script src="index.js"></script>
+  </body>
+</html>
