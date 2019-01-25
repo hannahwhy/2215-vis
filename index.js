@@ -1,4 +1,4 @@
-const url = 'https://gist.githubusercontent.com/yipdw/58559104bb8a15498bb052602197bc17/raw/b3373c935aa08fa70f562568709c967e3b2d99fb/data.json';
+const url = 'data.json';
 
 d3.json(url).then (function (data) {
   const vis = document.getElementById('vis');
